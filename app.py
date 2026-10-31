@@ -1,4 +1,4 @@
-import streamlit as-st
+import streamlit as st
 import pandas as pd
 import pulp as plp
 from fpdf import FPDF
@@ -12,42 +12,48 @@ st.set_page_config(
     layout="wide"
 )
 
-# Estilos CSS personalizados (Paleta corporativa verde industrial)
+# Estilos CSS avanzados: Paleta Amarillo, Negro y Blanco (Alto Contraste / Industrial)
 st.markdown("""
     <style>
-    .main { background-color: #f7f9f8; }
-    .stTabs [data-baseweb="tab-list"] { gap: 10px; }
+    .main { background-color: #121212; color: #f0f0f0; }
+    .stTabs [data-baseweb="tab-list"] { gap: 10px; background-color: #000000; padding: 10px; border-radius: 8px; }
     .stTabs [data-baseweb="tab"] {
-        background-color: #e0f2ec;
-        border-radius: 4px;
-        padding: 10px 20px;
-        font-weight: 600;
-        color: #1b4d3e;
+        background-color: #222222;
+        border-radius: 6px;
+        padding: 10px 22px;
+        font-weight: 700;
+        color: #ffffff;
+        border: 1px solid #333333;
     }
     .stTabs [aria-selected="true"] {
-        background-color: #1b4d3e !important;
-        color: #ffffff !important;
+        background-color: #ffcc00 !important;
+        color: #000000 !important;
+        border: 1px solid #ffcc00;
     }
-    .card {
-        background-color: #ffffff;
-        padding: 20px;
-        border-radius: 8px;
-        border: 1px solid #d0ded6;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+    .card-container {
+        background-color: #1e1e1e;
+        padding: 24px;
+        border-radius: 10px;
+        border: 1px solid #333333;
+        border-left: 5px solid #ffcc00;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.4);
         margin-bottom: 20px;
+    }
+    .stMarkdown h1, .stMarkdown h2, .stMarkdown h3, .stMarkdown h4 {
+        color: #ffffff !important;
     }
     </style>
 """, unsafe_allow_html=True)
 
-# Encabezado visual corporativo
+# Encabezado visual corporativo estilizado con Negro y Amarillo
 st.markdown("""
-    <div style="background: linear-gradient(135deg, #1b4d3e, #2e6f5c); color: white; padding: 25px; border-radius: 8px; border-bottom: 4px solid #d4af37; margin-bottom: 20px;">
-        <h1 style="margin:0; font-size: 26px;">🐷 NUTRIPIG ÓPTIMA</h1>
-        <p style="margin:5px 0 0 0; font-size: 14px; color: #e0f2ec;">Sistema de Optimización Nutricional y Costos porcinos | Desarrollado por INGEBER</p>
+    <div style="background: linear-gradient(135deg, #000000, #1f1f1f); color: white; padding: 30px; border-radius: 10px; border-bottom: 5px solid #ffcc00; margin-bottom: 25px; box-shadow: 0 4px 10px rgba(0,0,0,0.5);">
+        <h1 style="margin:0; font-size: 28px; font-weight: 700; color: #ffcc00 !important;">🐷 NUTRIPIG ÓPTIMA</h1>
+        <p style="margin:8px 0 0 0; font-size: 15px; color: #cccccc;">Sistema Avanzado de Optimización Nutricional y Costos Porcinos | Oficina Técnica INGEBER</p>
     </div>
 """, unsafe_allow_html=True)
 
-# Pestañas de navegación de la aplicación
+# Navegación por pestañas limpias y estructuradas
 tab1, tab2, tab3, tab4 = st.tabs([
     "🌾 Formulación de Raciones", 
     "📊 Base de Datos y Stock", 
@@ -57,7 +63,9 @@ tab1, tab2, tab3, tab4 = st.tabs([
 
 # --- PESTAÑA 1: FORMULACIÓN DE RACIONES ---
 with tab1:
-    st.markdown("### Motor de Optimización Lineal (Algoritmo Simplex)")
+    st.markdown('<div class="card-container">', unsafe_allow_html=True)
+    st.subheader("⚙️ Motor de Optimización Lineal (Algoritmo Simplex)")
+    st.write("Configure los parámetros del lote y las restricciones nutricionales para calcular la ración de mínimo costo.")
     
     col1, col2 = st.columns(2)
     with col1:
@@ -69,7 +77,7 @@ with tab1:
         lote_kg = st.number_input("Cantidad de alimento a preparar (Kg):", min_value=10.0, value=1000.0, step=100.0)
 
     st.markdown("---")
-    st.subheader("Restricciones Nutricionales Avanzadas (Mínimos requeridos)")
+    st.markdown("#### 🔬 Restricciones Nutricionales Mínimas")
     
     col_r1, col_r2, col_r3, col_r4, col_r5 = st.columns(5)
     with col_r1:
@@ -84,9 +92,8 @@ with tab1:
         min_cal = st.number_input("Calcio / Fósforo (%)", value=0.7, step=0.05)
 
     st.markdown("---")
-    st.subheader("Matriz de Ingredientes, Costos y Stock en Bodega")
+    st.markdown("#### 📦 Matriz de Materias Primas, Costos y Stock en Bodega")
     
-    # Base de datos editable de ingredientes
     df_default = pd.DataFrame([
         {"Ingrediente": "Maíz Grano", "Costo ($/kg)": 280, "Stock (kg)": 5000, "EM (Mcal)": 3.3, "PC (%)": 8.5, "Met (%)": 0.18, "Lys (%)": 0.26, "Ca (%)": 0.02},
         {"Ingrediente": "Afrecho de Trigo", "Costo ($/kg)": 180, "Stock (kg)": 2000, "EM (Mcal)": 2.1, "PC (%)": 15.0, "Met (%)": 0.22, "Lys (%)": 0.55, "Ca (%)": 0.12},
@@ -97,32 +104,26 @@ with tab1:
     
     edited_df = st.data_editor(df_default, num_rows="dynamic", use_container_width=True)
 
-    if st.button("Ejecutar Optimización de Mezcla", type="primary"):
+    if st.button("🚀 Ejecutar Optimización de Mezcla", type="primary"):
         try:
             prob = plp.LpProblem("Optimizacion_Alimento_Porcino", plp.LpMinimize)
             
-            # Variables de decisión (Kg de cada ingrediente)
             ingredientes = edited_df["Ingrediente"].tolist()
             x = {ing: plp.LpVariable(f"x_{ing}", lowBound=0) for ing in ingredientes}
             
-            # Función Objetivo: Minimizar costo total
             prob += plp.lpSum(x[ing] * edited_df.loc[edited_df["Ingrediente"] == ing, "Costo ($/kg)"].values[0] for ing in ingredientes)
             
-            # Restricción: El total debe sumar la cantidad solicitada (o 100% si se maneja proporcional, ajustado a lote)
             total_kg = plp.lpSum(x[ing] for ing in ingredientes)
             prob += total_kg == lote_kg, "Suma_Total"
             
-            # Restricción de Stock disponible en bodega
             for idx, row in edited_df.iterrows():
                 ing = row["Ingrediente"]
                 stock_max = row["Stock (kg)"]
                 prob += x[ing] <= stock_max, f"Stock_Max_{ing}"
             
-            # Restricciones nutricionales proporcionales al total
             prob += plp.lpSum(x[ing] * edited_df.loc[edited_df["Ingrediente"] == ing, "EM (Mcal)"].values[0] for ing in ingredientes) >= min_em * lote_kg, "Min_EM"
             prob += plp.lpSum(x[ing] * edited_df.loc[edited_df["Ingrediente"] == ing, "PC (%)"].values[0] for ing in ingredientes) >= min_pc * lote_kg, "Min_PC"
             
-            # Resolver modelo con PuLP
             prob.solve(plp.PULP_CBC_CMD(msg=False))
             
             if plp.LpStatus[prob.status] == 'Optimal':
@@ -147,16 +148,18 @@ with tab1:
                 df_res = pd.DataFrame(resultados)
                 st.dataframe(df_res, use_container_width=True)
                 
-                st.metric("Costo Total del Lote ($)", f"${costo_total:,.2f}")
-                st.metric("Costo Promedio por Kilogramo ($/kg)", f"${costo_total/lote_kg:,.2f}")
+                m1, m2 = st.columns(2)
+                with m1:
+                    st.metric("Costo Total del Lote ($)", f"${costo_total:,.2f}")
+                with m2:
+                    st.metric("Costo Promedio por Kilogramo ($/kg)", f"${costo_total/lote_kg:,.2f}")
                 
-                # Generación de Reporte PDF Corporativo con fpdf2
                 class PDF(FPDF):
                     def header(self):
-                        self.set_fill_ofp = (27, 77, 62)
+                        self.set_fill_color(0, 0, 0)
                         self.rect(0, 0, 210, 25, 'F')
                         self.set_font('Helvetica', 'B', 14)
-                        self.set_text_color(255, 255, 255)
+                        self.set_text_color(255, 204, 0)
                         self.cell(0, 15, ' INGEBER - REPORTE TÉCNICO DE FORMULACIÓN', 0, 1, 'L')
                         self.ln(10)
 
@@ -169,11 +172,10 @@ with tab1:
                 pdf = PDF()
                 pdf.add_page()
                 pdf.set_font('Helvetica', 'B', 12)
-                pdf.set_text_color(27, 77, 62)
+                pdf.set_text_color(0, 0, 0)
                 pdf.cell(0, 10, f'Plan de Alimentación: {etapa}', 0, 1, 'L')
                 
                 pdf.set_font('Helvetica', '', 10)
-                pdf.set_text_color(0, 0, 0)
                 pdf.cell(0, 6, f'Tamano del Lote Producido: {lote_kg} Kg', 0, 1, 'L')
                 pdf.cell(0, 6, f'Costo Total de la Formula: ${costo_total:,.2f}', 0, 1, 'L')
                 pdf.cell(0, 6, f'Costo Unitario: ${costo_total/lote_kg:,.2f} por Kg', 0, 1, 'L')
@@ -183,7 +185,7 @@ with tab1:
                 pdf.cell(0, 8, 'Desglose de Ingredientes y Mezcla:', 0, 1, 'L')
                 
                 pdf.set_font('Helvetica', 'B', 9)
-                pdf.set_fill_ofp_color = (224, 242, 236)
+                pdf.set_fill_color(240, 240, 240)
                 pdf.cell(80, 7, 'Ingrediente', 1, 0, 'C', True)
                 pdf.cell(35, 7, '% en Formula', 1, 0, 'C', True)
                 pdf.cell(35, 7, 'Cantidad (Kg)', 1, 0, 'C', True)
@@ -217,16 +219,20 @@ with tab1:
                 st.error("No se encontró una solución factible con las restricciones y el stock ingresado. Intente relajar algún límite nutricional o aumentar el stock.")
         except Exception as e:
             st.error(f"Error en la ejecución del optimizador: {e}")
+    st.markdown('</div>', unsafe_allow_html=True)
 
 # --- PESTAÑA 2: BASE DE DATOS Y STOCK ---
 with tab2:
-    st.markdown("### Gestión de Inventario y Materias Primas")
+    st.markdown('<div class="card-container">', unsafe_allow_html=True)
+    st.subheader("📊 Gestión de Inventario y Materias Primas")
     st.info("Administre los precios vigentes en el mercado local y el stock físico disponible en su bodega para optimizar las compras y evitar quiebres de inventario.")
     st.dataframe(df_default, use_container_width=True)
+    st.markdown('</div>', unsafe_allow_html=True)
 
 # --- PESTAÑA 3: CALCULADORA DE COSTOS ---
 with tab3:
-    st.markdown("### Análisis Financiero de Producción porcina")
+    st.markdown('<div class="card-container">', unsafe_allow_html=True)
+    st.subheader("💰 Análisis Financiero de Producción Porcina")
     col_c1, col_c2 = st.columns(2)
     with col_c1:
         num_animales = st.number_input("Número de animales en lote:", value=50, step=10)
@@ -239,12 +245,17 @@ with tab3:
     costo_total_proyeccion = consumo_total_lote * costo_kg_alimento
     
     st.markdown("---")
-    st.metric("Consumo Total Requerido para el Lote (Kg)", f"{consumo_total_lote:,.2f} Kg")
-    st.metric("Proyección Financiera de Alimentación ($)", f"${costo_total_proyeccion:,.2f}")
+    mc1, mc2 = st.columns(2)
+    with mc1:
+        st.metric("Consumo Total Requerido (Kg)", f"{consumo_total_lote:,.2f} Kg")
+    with mc2:
+        st.metric("Proyección Financiera ($)", f"${costo_total_proyeccion:,.2f}")
+    st.markdown('</div>', unsafe_allow_html=True)
 
 # --- PESTAÑA 4: MODELADO DE CRECIMIENTO ---
 with tab4:
-    st.markdown("### Parámetros de Crecimiento y Conversión Alimenticia")
+    st.markdown('<div class="card-container">', unsafe_allow_html=True)
+    st.subheader("📈 Parámetros de Crecimiento y Conversión Alimenticia")
     st.write("Control técnico de conversión y ganancia diaria de peso (GDP) adaptado para sistemas convencionales y de cama profunda.")
     
     peso_inicial = st.number_input("Peso Inicial Promedio (kg):", value=30.0)
@@ -254,3 +265,4 @@ with tab4:
     if gdp > 0:
         dias_necesarios = (peso_final - peso_inicial) / gdp
         st.success(f"Tiempo estimado para alcanzar la meta: **{dias_necesarios:.1f} días**")
+    st.markdown('</div>', unsafe_allow_html=True)
