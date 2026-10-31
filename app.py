@@ -109,8 +109,8 @@ with tab1:
             prob = plp.LpProblem("Optimizacion_Alimento_Porcino", plp.LpMinimize)
             
             ingredientes = edited_df["Ingrediente"].tolist()
-            # Corrección aplicada aquí usando el argumento posicional 0 para el límite inferior
-            x = {ing: plp.LpVariable(f"x_{ing}", 0) for ing in ingredientes}
+            # Corrección: Instanciación limpia compatible con la versión de PuLP en servidor
+            x = {ing: plp.LpVariable(f"x_{ing}") for ing in ingredientes}
             
             prob += plp.lpSum(x[ing] * edited_df.loc[edited_df["Ingrediente"] == ing, "Costo ($/kg)"].values[0] for ing in ingredientes)
             
